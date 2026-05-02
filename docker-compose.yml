@@ -1,0 +1,31 @@
+services:
+
+  db_sql:
+    image: mysql:8
+    ports:
+      - '3306:3306'
+    volumes:
+        - ./data/mysql:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: pass
+      MYSQL_ROOT_PASSWORD: YES
+  db_postgres:
+    image: dhi.io/postgres:18-alpine3.22-dev
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: pass
+  node-app:
+    build: .
+    image: gate-node-image:1.0
+    ports:
+      - '9999:9999'
+    depends_on:
+    - db_sql
+    - db_postgres
