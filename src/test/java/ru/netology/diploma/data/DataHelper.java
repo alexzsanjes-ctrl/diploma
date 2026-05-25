@@ -45,6 +45,7 @@ public class DataHelper {
     @NoArgsConstructor
     public static class Status {
         private String status;
+        private int amount;
     }
 
     @Value

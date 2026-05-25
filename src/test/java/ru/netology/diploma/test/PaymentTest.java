@@ -48,6 +48,7 @@ public class PaymentTest {
         payTab.pageNotification();
         var status = SQLHelper.getPaymentStatus();
         Assertions.assertEquals("APPROVED", status.getStatus());
+        Assertions.assertEquals(45_000, status.getAmount());
     }
 
     @Test
