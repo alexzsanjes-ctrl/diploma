@@ -1,6 +1,5 @@
 package ru.netology.diploma.test;
 
-import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.github.javafaker.CreditCardType;
 import com.github.javafaker.Faker;
@@ -8,9 +7,8 @@ import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
 import ru.netology.diploma.data.DataHelper;
 import ru.netology.diploma.data.SQLHelper;
-import ru.netology.diploma.page.PageObject;
+import ru.netology.diploma.page.TravelPaymentPage;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -41,7 +39,7 @@ public class PaymentTest {
     @Test
     @DisplayName("Успешная оплата первой сохраненной картой")
     void ShouldSuccessPayByFirstCard() {
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(firstCardInfo);
@@ -54,7 +52,7 @@ public class PaymentTest {
     @Test
     @DisplayName("Безуспешная оплата при попытке оплатить второй сохранненой картой")
     void ShouldNotSuccessPayBySecondCard() {
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(secondCardInfo);
@@ -71,7 +69,7 @@ public class PaymentTest {
                         12,
                         "en",
                         CreditCardType.MASTERCARD);
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(otherCardInfo);
@@ -83,7 +81,7 @@ public class PaymentTest {
     void ShouldDisplayErrorWhenCardFieldIsEmpty() {
         var cardWithEmptyFieldNumber = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomNumber("", 5, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithEmptyFieldNumber);
@@ -97,7 +95,7 @@ public class PaymentTest {
                 .getOtherCardInfo(36,
                         "en",
                         CreditCardType.AMERICAN_EXPRESS);
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(otherCardInfo);
@@ -105,16 +103,15 @@ public class PaymentTest {
     }
 
     @Test
-    @DisplayName("Должна отобразиться ошибка при вводе номера карты больше 16 цифр")
-    void shouldDisplayErrorWhenCardNumberContainUnderNumberThenPlaceHolderFormat() {
-        String number = faker.number().digits(17);
+    @DisplayName("Успешное выполнение операции при попытке ввода номера карты больше 16 цифр")
+    void shouldSuccessPayWhenCardNumberContainUnderNumberThenPlaceHolderFormat() {
         var otherCardInfo = DataHelper.GenerateCardInformation
-                .getCardInfoWithCustomNumber(number, 24, "en");
-        var payTab = new PageObject();
+                .getCardInfoWithCustomNumber("4444 4444 4444 44412", 24, "en");
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(otherCardInfo);
-        payTab.errorFieldInfo();
+        payTab.pageNotification();
     }
 
     @Test
@@ -123,7 +120,7 @@ public class PaymentTest {
         String number = faker.bothify("??##??##??##??##");
         var otherCardInfo = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomNumber(number, 24, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(otherCardInfo);
@@ -136,7 +133,7 @@ public class PaymentTest {
         String number = faker.bothify("????????????????");
         var otherCardInfo = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomNumber(number, 24, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(otherCardInfo);
@@ -148,7 +145,7 @@ public class PaymentTest {
     void ShouldDisplayedErrorWhenMonthFieldIsEmpty() {
         var cardWithEmptyMonthDate = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomDate("", year, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithEmptyMonthDate);
@@ -160,7 +157,7 @@ public class PaymentTest {
     void ShouldDisplayedErrorWhenMonthFieldIsContainZeroValue() {
         var cardWithZeroMonthDate = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomDate("00", year, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithZeroMonthDate);
@@ -172,7 +169,7 @@ public class PaymentTest {
     void ShouldDisplayedErrorWhenMonthFieldIsContainValueThirteen() {
         var cardWithThirteenMonthDate = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomDate("13", year, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithThirteenMonthDate);
@@ -184,7 +181,7 @@ public class PaymentTest {
     void ShouldDisplayedErrorWhenInputPastDate() {
         var cardWithPastDate = DataHelper.GenerateCardInformation
                 .getCardInfoWithPastDate(8, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithPastDate);
@@ -196,7 +193,7 @@ public class PaymentTest {
     void ShouldDisplayedErrorWhenYearFieldIsEmpty() {
         var cardWithEmptyYearDate = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomDate("12", "", "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithEmptyYearDate);
@@ -208,7 +205,7 @@ public class PaymentTest {
     void ShouldDisplayedErrorWhenInputYearFromDistantFuture() {
         var cardWithDistantYearDate = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomDate("12", "99", "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithDistantYearDate);
@@ -220,7 +217,7 @@ public class PaymentTest {
     void ShouldDisplayedErrorIfNameFieldIsEmpty() {
         var cardWithEmptyHolder = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomHolder("", 6, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithEmptyHolder);
@@ -235,7 +232,7 @@ public class PaymentTest {
                         8,
                         "ru",
                         CreditCardType.MASTERCARD);
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithInvalidFormatHolder);
@@ -248,7 +245,7 @@ public class PaymentTest {
         String holder = faker.bothify("########");
         var cardWithInvalidFormatHolder = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomHolder(holder, 36, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithInvalidFormatHolder);
@@ -261,7 +258,7 @@ public class PaymentTest {
         String holder = faker.bothify("??##??##");
         var cardWithInvalidFormatHolder = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomHolder(holder, 36, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithInvalidFormatHolder);
@@ -273,7 +270,7 @@ public class PaymentTest {
     void ShouldDisplayedErrorIfNameFieldContainSpecificSymbols() {
         var cardWithInvalidFormatHolder = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomHolder("Ivan@-$Ivanov#", 36, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithInvalidFormatHolder);
@@ -285,7 +282,7 @@ public class PaymentTest {
     void ShouldDisplayedErrorIfCVCFieldIsEmpty() {
         var cardWithEmptyCVC = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomCVC("", 18, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithEmptyCVC);
@@ -298,7 +295,7 @@ public class PaymentTest {
         String code = faker.number().digits(2);
         var cardWithEmptyCVC = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomCVC(code, 18, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithEmptyCVC);
@@ -306,16 +303,16 @@ public class PaymentTest {
     }
 
     @Test
-    @DisplayName("Должна отобразиться ошибка, когда в поле CVC введено 4 цифры")
-    void ShouldDisplayedErrorWhenInputInCVCFieldFourNumbers() {
+    @DisplayName("Успешное выполнение операции при попытке ввода в поле CVC 4-х цифр")
+    void ShouldSuccessPayWhenInputInCVCFieldFourNumbers() {
         String code = faker.number().digits(4);
-        var cardWithEmptyCVC = DataHelper.GenerateCardInformation
+        var otherCardInformation = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomCVC(code, 31, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
-        payTab.setField(cardWithEmptyCVC);
-        payTab.errorFieldInfo();
+        payTab.setField(otherCardInformation);
+        payTab.pageNotification();
     }
 
     @Test
@@ -324,7 +321,7 @@ public class PaymentTest {
         String code = faker.bothify("#?#");
         var cardWithEmptyCVC = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomCVC(code, 31, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithEmptyCVC);
@@ -337,7 +334,7 @@ public class PaymentTest {
         String code = faker.bothify("???");
         var cardWithEmptyCVC = DataHelper.GenerateCardInformation
                 .getCardInfoWithCustomCVC(code, 31, "en");
-        var payTab = new PageObject();
+        var payTab = new TravelPaymentPage();
         payTab.setPayButton();
         payTab.paymentPageHeader();
         payTab.setField(cardWithEmptyCVC);

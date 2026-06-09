@@ -2,7 +2,6 @@ package ru.netology.diploma.page;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import ru.netology.diploma.data.DataHelper;
@@ -12,7 +11,7 @@ import java.time.Duration;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
-public class PageObject {
+public class TravelPaymentPage {
     private ElementsCollection button = $$("button");
     private ElementsCollection heading = $$("h3");
     private ElementsCollection field = $$("input.input__control");
